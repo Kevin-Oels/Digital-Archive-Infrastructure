@@ -1,5 +1,5 @@
 'use strict'
-var AWS = require('aws-sdk'),
+const AWS = require('aws-sdk'),
 documentClient = new AWS.DynamoDB.DocumentClient()
 const TableName = process.env.TABLE
 

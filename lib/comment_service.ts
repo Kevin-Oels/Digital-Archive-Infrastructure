@@ -15,7 +15,7 @@ export class CommentService extends core.Construct {
         // define a lambda to allow users to add comments to a pdf
         const commentHandler = new lambda.Function(this, "CommentHandler", {
             runtime: lambda.Runtime.NODEJS_12_X, // So we can use async in commentHandler.js
-            code: lambda.Code.fromAsset("resources"),
+            code: lambda.Code.fromAsset("lambdas/comment-handler"),
             handler: "commentHandler.main",
             environment: {
                 TABLE: commentTable.tableName
@@ -26,16 +26,16 @@ export class CommentService extends core.Construct {
         // create the api endpoint
         const commentServiceApi = new apigateway.RestApi(this, "archive-comment-service-api", {
             restApiName: "Comment Service",
-            description: "This service handles adding and approving comments for documents"
+            description: "This service handles adding and approving comments for documents",
         });
 
         // describe the lambda integration for the api endpoint
-        const getStoresIntegration = new apigateway.LambdaIntegration(commentHandler, {
+        const commentsBackend = new apigateway.LambdaIntegration(commentHandler, {
             requestTemplates: { "application/json": '{ "statusCode": "200" }' },
         });
         
         // apply the lambda integration to the GET method
-        commentServiceApi.root.addMethod("GET", getStoresIntegration); // GET /
+        commentServiceApi.root.addMethod("GET", commentsBackend); // GET /
     }
 }
 

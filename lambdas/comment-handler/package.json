@@ -1,0 +1,10 @@
+{
+  "name": "digital-archive-comment-handler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "archiveStoreHandler.js",
+  "scripts": {
+  },
+  "author": "Kevin Oels",
+  "license": "ISC"
+}
