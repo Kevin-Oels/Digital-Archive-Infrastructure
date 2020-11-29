@@ -5,8 +5,5 @@
   "main": "archiveStoreHandler.js",
   "scripts": {},
   "author": "Kevin Oels",
-  "license": "ISC",
-  "dependencies": {
-    "busboy": "^0.3.1"
-  }
+  "license": "ISC"
 }

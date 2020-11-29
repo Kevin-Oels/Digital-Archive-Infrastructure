@@ -3,21 +3,26 @@ import * as apigateway from "@aws-cdk/aws-apigateway"
 import * as lambda from "@aws-cdk/aws-lambda"
 import * as dynamodb from "@aws-cdk/aws-dynamodb"
 import { Bucket, HttpMethods } from "@aws-cdk/aws-s3"
+import * as cognito from "@aws-cdk/aws-cognito"
 
 export class ArchiveService extends core.Construct {
     constructor(scope: core.Construct, id: string) {
         super(scope, id)
 
         // create the bucket we will be storing documents in
-        const archiveStorage = new Bucket(this, 'ArchiveStore');
-        archiveStorage.addCorsRule({
-            allowedMethods: [HttpMethods.GET, HttpMethods.POST, HttpMethods.DELETE, HttpMethods.GET ],
-            allowedOrigins: [`*` ] 
-          });
+        new Bucket(this, 'ArchiveStore', {
+            cors:[{
+                allowedHeaders: [`*`],
+                allowedMethods: [HttpMethods.GET, HttpMethods.POST, HttpMethods.DELETE, HttpMethods.PUT ],
+                allowedOrigins: [`*` ]
+              }],
+            removalPolicy: core.RemovalPolicy.DESTROY
+        });
 
         // create the dynamodb table we will be storing pdf meta data in.
         const documentTable = new dynamodb.Table(this, 'documentTable', {
-            partitionKey: { name: 'documentId', type: dynamodb.AttributeType.STRING },
+            partitionKey: { name: 'documentid', type: dynamodb.AttributeType.STRING },
+            removalPolicy: core.RemovalPolicy.DESTROY
             })
 
         // define a lambda to handle writing files to the archive store bucket
@@ -36,7 +41,6 @@ export class ArchiveService extends core.Construct {
         // describe the lambda integration for the api endpoint
         const archiveBackend = new apigateway.LambdaIntegration(archiveStoreHandler, {
             requestTemplates: { "application/json": '{ "statusCode": "200" }' }
-
         })
 
         // create the api endpoint
@@ -49,6 +53,7 @@ export class ArchiveService extends core.Construct {
         const items = archiveUploadApi.root.addResource('items');
         items.addMethod('GET'); // GET /items
         items.addMethod('POST'); // POST /items
+        items.addMethod('OPTIONS'); // OPTIONS /items
 
         const item = items.addResource('{item}');
         item.addMethod('GET');   // GET /items/{item}

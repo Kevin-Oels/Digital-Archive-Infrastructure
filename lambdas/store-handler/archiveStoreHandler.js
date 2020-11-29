@@ -12,10 +12,11 @@ exports.main = async (event) => {
         var params = {
           TableName: tableName,
           Item: {
-            'documentId' : {S: metadata.fileId},
-            'articleName' : {S: metadata.articleName},
+            'documentid' : {S: metadata.fileId},
+            'articlename' : {S: metadata.articlename},
             'year' : {S: metadata.year},
-            'tags' : {S: metadata.tags}
+            'tags' : {SS: metadata.tags},
+            'addedby' : {S: metadata.addedby},
           }
         };
         let result = await ddb.putItem(params).promise();
@@ -31,18 +32,21 @@ exports.main = async (event) => {
         };
         return response;
     } else if (event.httpMethod === "GET"){
-        let documentId ='';
+        let documentid ='';
         if(event.pathParameters && event.pathParameters.item) {
-            documentId = event.pathParameters.item;
+            documentid = event.pathParameters.item;
+        }
+        if(event.pathParameters && event.pathParameters.item) {
+            documentid = event.pathParameters.item;
         }
         const params = {
             TableName: tableName
         }
         
-        if (documentId !== ''){
-            params.FilterExpression = 'documentId = :documentId'
+        if (documentid !== ''){
+            params.FilterExpression = 'documentid = :documentid'
             params.ExpressionAttributeValues = {
-                ":documentId": documentId
+                ":documentid": documentid
             }
         }
         
