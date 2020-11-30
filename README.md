@@ -1,7 +1,9 @@
-# Welcome to your CDK TypeScript project!
+# Welcome to Digital-Archive-Infrastructure:
 
-This is a blank project for TypeScript development with CDK.
-
+This is the back end Infrastructurefor a digital archive.
+It is seperated into two logical services:
+The archive service for handling uploading files & data, It contains the root dynamodb table & s3 storage resources.
+The comment service which handles adding user comments to articles.
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 ## Useful commands
